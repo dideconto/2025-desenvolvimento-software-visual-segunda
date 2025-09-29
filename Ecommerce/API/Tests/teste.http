@@ -11,6 +11,19 @@ GET http://localhost:5190/api/produto/buscar/Mouse
 POST http://localhost:5190/api/produto/cadastrar
 Content-Type: application/json
 
+{    
+    "nome" : "Mouse",
+    "quantidade" : 123,
+    "preco" : 57.75
+}
+
+### Remover produto por id
+DELETE http://localhost:5190/api/produto/deletar/659c8b36-df29-4ebe-979a-3dd5706109a9
+
+### Alterar produto
+PATCH http://localhost:5190/api/produto/alterar/
+Content-Type: application/json
+
 {
     "nome" : "Mouse",
     "quantidade" : 123,
