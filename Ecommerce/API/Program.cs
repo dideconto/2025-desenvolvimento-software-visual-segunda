@@ -1,7 +1,7 @@
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
-Console.Clear();
+// Console.Clear();
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
@@ -126,3 +126,4 @@ app.MapPatch("/api/produto/alterar/{id}",
 
 //Implementar a remoção e atualização do produto
 app.Run();
+

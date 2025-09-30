@@ -21,7 +21,7 @@ Content-Type: application/json
 DELETE http://localhost:5190/api/produto/deletar/659c8b36-df29-4ebe-979a-3dd5706109a9
 
 ### Alterar produto
-PATCH http://localhost:5190/api/produto/alterar/
+PATCH http://localhost:5190/api/produto/alterar/a6f11b5-01ac-4102-8f30-c699b78a57d7
 Content-Type: application/json
 
 {
