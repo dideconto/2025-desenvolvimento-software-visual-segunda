@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 // Console.Clear();
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<AppDataContext>();
 var app = builder.Build();
 
 //Lista de produtos fakes
@@ -50,24 +51,26 @@ List<Produto> produtos = new List<Produto>
 app.MapGet("/", () => "API de Produtos");
 
 //GET: /api/produto/listar
-app.MapGet("/api/produto/listar", () =>
+app.MapGet("/api/produto/listar",
+    ([FromServices] AppDataContext ctx) =>
 {
     //Validar a lista de produtos para saber 
     //se existe algo dentro
-    if (produtos.Any())
+    if (ctx.Produtos.Any())
     {
-        return Results.Ok(produtos);
+        return Results.Ok(ctx.Produtos.ToList());
     }
     return Results.NotFound("Lista vazia!");
 });
 
 //GET: /api/produto/buscar/nome_do_produto
 app.MapGet("/api/produto/buscar/{nome}",
-    ([FromRoute] string nome) =>
+    ([FromRoute] string nome,
+    [FromServices] AppDataContext ctx) =>
 {
     //Expressão lambda
     Produto? resultado =
-        produtos.FirstOrDefault(x => x.Nome == nome);
+        ctx.Produtos.FirstOrDefault(x => x.Nome == nome);
     if (resultado is null)
     {
         return Results.NotFound("Produto não encontrado!");
@@ -77,42 +80,44 @@ app.MapGet("/api/produto/buscar/{nome}",
 
 //POST: /api/produto/cadastrar
 app.MapPost("/api/produto/cadastrar",
-    ([FromBody] Produto produto) =>
+    ([FromBody] Produto produto,
+    [FromServices] AppDataContext ctx) =>
 {
     //Não permitir o cadastro de um produto
     //com o mesmo nome
-    foreach (Produto produtoCadastrado in produtos)
+    Produto? resultado =
+        ctx.Produtos.FirstOrDefault(x => x.Nome == produto.Nome);
+    if (resultado is not null)
     {
-        if (produtoCadastrado.Nome == produto.Nome)
-        {
-            return Results.Conflict("Produto já cadastrado!");
-        }
+        return Results.Conflict("Esse produto já existe!");
     }
-    produtos.Add(produto);
+    ctx.Produtos.Add(produto);
+    ctx.SaveChanges();
     return Results.Created("", produto);
 });
 
 //DELETE: /api/produto/deletar/id
 app.MapDelete("/api/produto/deletar/{id}",
-    ([FromRoute] string id) =>
+    ([FromRoute] string id,
+    [FromServices] AppDataContext ctx) =>
 {
-    Produto? resultado = produtos.FirstOrDefault
-        (x => x.Id == id);
+    Produto? resultado = ctx.Produtos.Find(id);
     if (resultado is null)
     {
         return Results.NotFound("Produto não encotrado!");
     }
-    produtos.Remove(resultado);
+    ctx.Produtos.Remove(resultado);
+    ctx.SaveChanges();
     return Results.Ok(resultado);
 });
 
 //DELETE: /api/produto/alterar/id
 app.MapPatch("/api/produto/alterar/{id}",
     ([FromRoute] string id,
-    [FromBody] Produto produtoAlterado) =>
+    [FromBody] Produto produtoAlterado,
+    [FromServices] AppDataContext ctx) =>
 {
-    Produto? resultado = produtos.FirstOrDefault
-        (x => x.Id == id);
+    Produto? resultado = ctx.Produtos.Find(id);
     if (resultado is null)
     {
         return Results.NotFound("Produto não encontrado!");
@@ -120,6 +125,8 @@ app.MapPatch("/api/produto/alterar/{id}",
     resultado.Nome = produtoAlterado.Nome;
     resultado.Quantidade = produtoAlterado.Quantidade;
     resultado.Preco = produtoAlterado.Preco;
+    ctx.Produtos.Update(resultado);
+    ctx.SaveChanges();
     return Results.Ok(resultado);
 });
 

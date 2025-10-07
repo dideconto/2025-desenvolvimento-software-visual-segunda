@@ -10,8 +10,10 @@ namespace API.Models;
 //3 - Configurar a string de conexão para SQLite
 public class AppDataContext : DbContext
 {
-    //Atributos representam as tabelas no banco
+    //Atributos (classes de modelo) representam as 
+    //tabelas no banco
     public DbSet<Produto> Produtos { get; set; }
+    public DbSet<Categoria> Categorias { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlite("Data Source=Ecommerce.db");
