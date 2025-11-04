@@ -4,6 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 // Console.Clear();
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDataContext>();
+
+builder.Services.AddCors(options =>
+    options.AddPolicy("Acesso Total",
+        configs => configs
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod())
+);
+
 var app = builder.Build();
 
 //Lista de produtos fakes
@@ -130,7 +139,6 @@ app.MapPatch("/api/produto/alterar/{id}",
     return Results.Ok(resultado);
 });
 
-
-//Implementar a remoção e atualização do produto
+app.UseCors("Acesso Total");
 app.Run();
 
