@@ -2,6 +2,7 @@ import React from "react";
 import ListarProdutos from "./components/pages/produto/ListarProduto";
 import CadastrarProduto from "./components/pages/produto/CadastrarProduto";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import AlterarProduto from "./components/pages/produto/AlterarProduto";
 
 function App() {
   return (
@@ -22,6 +23,10 @@ function App() {
           <Route
             path="/produto/cadastrar"
             element={<CadastrarProduto />}
+          />
+          <Route
+            path="/produto/alterar/:id"
+            element={<AlterarProduto />}
           />
         </Routes>
       </div>
